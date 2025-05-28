@@ -3,3 +3,13 @@ langchain-core
 langchain-openai
 openai
 PyMuPDF
+whisper
+nltk
+numpy
+scikit-learn
+fastapi
+uvicorn
+unstructured
+python-pptx
+docx2txt
+python-dotenv

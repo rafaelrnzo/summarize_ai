@@ -1,0 +1,20 @@
+- System manajemen gudang mengirim stock reorder letter
+- bagian operasional akan mendapatkan letter melalui email
+- bagian operasional memesan ke suplier terhadap bahan kimia yang akan di beli dari letter 
+- SNC dapat mementukan jalur pengiriman (laut. udara)
+- SNC menentukan lokasi warehouse SNC
+- termin pembayaran yang diinginkan dalam jangka
+- waktu 1 bulan, 3 bulan, atau 6 bulan. Setiap jalur pengiriman dan jangka waktu pembayaran akan menentukan besaran Processing Fee yang akan dibebankan oleh Supplier.
+- Supplier mengirimkan barang melalui autorized logistic company
+- supplier melakukan penagihan berdasarkan pemesanan
+- bagian operasional akan melakukan pemeriksaan kesesuaian barang antara Stock Reorder Letter, Purchase Order, dan Delivery Order (barang datang)
+- Bagian Operasional kemudian akan membuat surat tanda terima (Good Receipt)
+- Supplier mendapatkan form yang sudah di cetak
+- Bagian operasional akan mengirimkan sebuah informasi jika barang tidak sesuai 
+- supplier mendapatkan informasi ketidaksesuaian barang
+- Supplier mengirimkan ulang yang sesuai dengan pemesanan
+- supplier mengirimkan invoice
+- Bagian keuangan memproses invoice maksimal 7 hari
+- Supplier akan menagih setiap tanggal 5 bila tidak dibayarkan oleh SNC
+- Proses monitoring Invoice yang perlu dibayarkan ini, saat ini dilakukan secara manual oleh bagian Keuangan.
+- Seluruh pesanan yang telah diterima, akan didatakan kedalam system manajemen gudang oleh bagian Operasional dalam waktu maksimal 3 hari kerja, dan akan mengupdate data stok bahan kimia didalam system
