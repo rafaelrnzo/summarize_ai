@@ -6,10 +6,10 @@ import traceback
 os.environ.pop("SSL_CERT_FILE", None)
 load_dotenv()
 
-MODEL_API_BASE = os.getenv("MODEL_API_SERVER")
+MODEL_API_BASE = os.getenv("MODEL_API_BASE")
 DEFAULT_MODEL = os.getenv("MODEL_MISTRAL")
-TOTAL_CONTEXT_LIMIT = 1024  # e.g., Mistral's max context length
-MAX_RESPONSE_TOKENS = 300   # response generation limit
+TOTAL_CONTEXT_LIMIT = 1024  
+MAX_RESPONSE_TOKENS = 512
 
 def create_llm():
     try:
@@ -17,7 +17,7 @@ def create_llm():
             model=DEFAULT_MODEL,
             openai_api_key="EMPTY",
             openai_api_base=MODEL_API_BASE,
-            max_tokens=MAX_RESPONSE_TOKENS,  # limit response generation
+            max_tokens=MAX_RESPONSE_TOKENS,
             temperature=0
         )
     except Exception as e:
