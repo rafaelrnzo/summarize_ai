@@ -10,10 +10,10 @@ from langchain_community.document_loaders import (
     UnstructuredExcelLoader, UnstructuredPowerPointLoader,
 )
 
-from file_type import get_file_type
-from transcribe import transcribe_audio, transcribe_video
+from utils.file_type import get_file_type
+from utils.transcribe import transcribe_audio, transcribe_video
 
-# === File Extension Maps ===
+# === Constants ===
 
 DOC_LOADERS = {
     '.docx': Docx2txtLoader,
@@ -33,14 +33,13 @@ AUDIO_EXTS = {'.mp3', '.wav', '.ogg', '.flac', '.m4a'}
 VIDEO_EXTS = {'.mp4', '.avi', '.mov', '.mkv', '.webm'}
 IMAGE_EXTS = {'.jpg', '.jpeg', '.png'}
 
-reader = easyocr.Reader(['en', 'id'], gpu=True)
+reader = easyocr.Reader(['en'], gpu=False)
 
 # === OCR Functions ===
 
 def ocr_image(path: str) -> str:
     results = reader.readtext(path)
     return "\n".join([res[1] for res in results])
-
 
 def extract_text_and_ocr_from_pdf(pdf_path: str) -> str:
     doc = fitz.open(pdf_path)
@@ -50,13 +49,13 @@ def extract_text_and_ocr_from_pdf(pdf_path: str) -> str:
         page = doc.load_page(page_index)
         page_parts = [f"--- Page {page_index + 1} ---"]
 
-        # Extract text
+        # Native text extraction
         text = page.get_text().strip()
         if text:
             page_parts.append("[Extracted Text]")
             page_parts.append(text)
 
-        # OCR on embedded images
+        # OCR from embedded images
         image_list = page.get_images(full=True)
         if image_list:
             page_parts.append("[OCR from Embedded Images]")
@@ -76,7 +75,7 @@ def extract_text_and_ocr_from_pdf(pdf_path: str) -> str:
 
     return "\n\n".join(final_text)
 
-# === Load and Extract Function ===
+# === Main Document Loader ===
 
 def load_document(file_path: str) -> str:
     if not os.path.exists(file_path):
@@ -96,27 +95,19 @@ def load_document(file_path: str) -> str:
             return ocr_image(file_path)
 
         if ext == '.pdf':
-            text = extract_text_and_ocr_from_pdf(file_path)
-            if len(text.strip()) < 50:
-                print("⚠️ Text extraction minimal, forcing full OCR...")
-                text = extract_text_and_ocr_from_pdf(file_path)
-            return text
+            return extract_text_and_ocr_from_pdf(file_path)
 
         if ext in DOC_LOADERS:
             docs = DOC_LOADERS[ext](file_path).load()
-            text = "\n".join(doc.page_content for doc in docs)
-            if len(text.strip()) < 50:
-                print("⚠️ Low content extracted, consider checking document formatting.")
-            return text
+            return "\n".join(doc.page_content for doc in docs)
 
-        # Fallback generic read
         with open(file_path, 'r', encoding='utf-8') as f:
             return f.read()
 
     except Exception as e:
         raise RuntimeError(f"Failed to load {file_path}: {e}")
 
-# === Batch Process PDFs ===
+# === Batch Processing ===
 
 def batch_process_pdfs(paths: List[str]) -> Dict[str, str]:
     results = {}
@@ -125,7 +116,7 @@ def batch_process_pdfs(paths: List[str]) -> Dict[str, str]:
             results[path] = load_document(path)
         except Exception as e:
             results[path] = None
-            print(f"❌ Failed to process {path}: {e}")
+            print(f"Failed to process {path}: {e}")
     return results
 
 # === PDF Info Summary ===
@@ -149,31 +140,30 @@ def get_pdf_info(pdf_path: str) -> Dict[str, any]:
     info["recommended_method"] = "text_extraction" if info["text_extractable"] else "ocr"
     return info
 
-# === Save Output ===
+# === Output to File Runner ===
 
-def save_output(text: str, output_path: str):
+def save_output_to_file(output_text: str, original_path: str) -> str:
+    base_name = os.path.splitext(os.path.basename(original_path))[0]
+    output_path = os.path.join(os.path.dirname(original_path), "output.txt")
     with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(text)
-    print(f"✅ Output saved to: {output_path}")
-
-# === Run Test ===
+        f.write(output_text)
+    return output_path
 
 if __name__ == "__main__":
-    test_path = r"D:\pyproject\proj\summarize_ai\app\vid\jok.mp4"  # ← Ganti path sesuai kebutuhan
-    output_file = "output.txt"  # Simpan hasil ke file output
+    test_path = r"D:\\pyproject\\proj\\summarize_ai\\app\\vid\\docTest.docx"  # Change as needed
+    print(f"📄 Processing: {test_path}")
 
-    print(f"📄 Processing file: {test_path}")
     start = time.time()
-
     try:
         raw_text = load_document(test_path)
-
-        if not raw_text.strip():
-            print("⚠️ Output is empty. File may need OCR fallback or deeper parsing.")
-        else:
-            save_output(raw_text, output_file)
-
         elapsed = time.time() - start
-        print(f"\n⏱️ Processing time: {elapsed:.2f} seconds")
+
+        output_file = save_output_to_file(raw_text, test_path)
+
+        print("\n✅ Done. Output saved.")
+        print(f"📂 Output File: {output_file}")
+        print(f"⏱️ Time: {elapsed:.2f} sec")
+        print(f"\n--- Preview ---\n{raw_text[:500]}...")
+
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"❌ Failed: {e}")

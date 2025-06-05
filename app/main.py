@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.schemas import SummarizeRequest
 import traceback
-from routers import summarize, chat
+from routers import summarize, chat, scan 
 import nltk 
 
 app = FastAPI(title="AI Summarize Data")
@@ -16,7 +16,8 @@ app.add_middleware(
 )
 
 app.include_router(summarize.router)
-app.include_router(chat.router)
+app.include_router(scan.router)
+# app.include_router(chat.router)
 
 @app.get("/")
 async def root():

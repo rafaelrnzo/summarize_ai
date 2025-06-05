@@ -1,0 +1,248 @@
+--- Page 1 ---
+[Extracted Text]
+YAMAHA
+Outboards
+F979C~CCid
+_E15C J
+‘erosene model —— eee ——
+E15NK
+SERVICE MANUAL E>
+PEDOMAN SERVIS CIN>
+290264
+[OCR from Embedded Images]
+Image 1:
+VAMAHA
+Marine
+Outboards
+Enduro model
+E9.9C
+E15C
+Kerosene model
+EI5NK
+SERVICE MANUAL
+PEDOMAN SERVIS
+IN
+290264
+
+--- Page 2 ---
+[Extracted Text]
+‘420000-0
+NOTICE
+This manual has been prepared by the Yamaha Motor Company Ltd. primarily for use by
+Yamaha dealers and their trained mechanics when performing maintenance procedures and
+repairs to Yamaha equipment. It has been written to suit the needs of persons who have a
+basic understanding of the mechanical and electrical concepts and procedures inherent in
+the work, for without such knowledge attempted repairs or service to the equipment could
+render it unsafe or unfit for use.
+Because the Yamaha Motor Company Ltd. has a policy of continuously improving its prod-
+ucts, models may differ in detail from the descriptions and illustrations given in this publica-
+tion. Use only the latest edition of this manual. Authorized Yamaha dealers are notified
+periodically of modifications and significant changes in specifications and procedures, and
+these are incorporated in successive editions of this manual.
+E9.9C/E15C, E1SNK
+SERVICE MANUAL
+© 1996 Yamaha Motor Co., Ltd.
+1st Edition, December 1996
+All rights reserved.
+No part of this publication may be
+reproduced or transmitted in any form or
+by any means including photocopying and
+recording without the written permission of
+the copyright holder.
+Such written permission must also be
+obtained before any part of this publication
+is stored in a retrieval system of any nature.
+Printed in Indonesia
+P/N 656-28197-86-VI
+[OCR from Embedded Images]
+Image 1:
+AZOCco
+NOTICE
+This manual has been prepared by the Yamaha Motor Company Ltd. primarily for use by
+Yamaha dealers and their trained mechanics when performing maintenance procedures and
+repairs to Yamaha equipment:
+It has been written to Suit the needs of persons who have
+basic understanding of the mechanical and electrical concepts and procedures inherent in
+the work, for without such knowledge attempted repairs or service to the equipment could
+render it unsafe Or unfit for use,
+Because the Yamaha Motor Company Ltd
+has
+policy of continuously improving its prod-
+ucts, models may differ in detail from the descriptions and illustrations given in this publica
+tion_
+Use only the latest edition
+of this
+manual.
+Authorized Yamaha dealers are notified
+periodically of modifications and significant changes in specifications and procedures, and
+these are incorporated in successive editions of this manual_
+E9.9C/E1SC, E1SNK
+SERVICE MANUAL
+1996 Yamaha Motor Co , Ltd:
+Ist Edition, December 1996
+AIl rights reserved
+No part of this publication
+be
+reproduced or transmitted in any form or
+by any means including photocopying and
+recording without the written permission of
+the copyright holder
+Such written permission must also be
+obtained before any part of this publication
+is stored in a retrieval system of any nature.
+Printed in Indonesia
+PIN 656-28197-86-VI
+may
+
+--- Page 3 ---
+[Extracted Text]
+PERHATIAN
+Buku petunjuk yang disusun oleh Yamaha Motor Company ini terutama dimaksudkan untuk digunakan
+oleh para dealer Yamaha dan mekanik-mekaniknya sebagai pedoman dalam melakukan perawatan
+dan reparasi peralatan buatan Yamaha. Buku ini disusun untuk mekanik yang memiliki pengetahuan
+dasar tentang konsep dan prosedur mekanik dan elektrikal yang berlaku untuk produk kami, karena
+tanpa bekal pengetahuan tadi usaha mereparasi atau perawatan atas produk kami tidak akan
+memberikan hasil sebagaimana mestinya.
+Yamaha Motor Company Ltd. secara terus-menerus melakukan perbaikan pada produk-produknya,
+karena itu mungkin saja model tertentu berbeda dengan spesifikasi dan ilustrasi yang terdapat dalam
+buku petunjuk ini. Sedapat mungkin gunakan edisi terakhir buku petunjuk ini.
+Dealer Yamaha yang ditunjuk mendapat pemberitahuan secara berkala mengenai modifikasi serta
+perubahan spesifikasi dan prosedur, dan semua perubahan ini akan dicantumkan di dalam edisi-
+edisi buku petunjuk berikutnya.
+£9.9C/E15C, E1SNK
+BUKU PETUNJUK PERAWATAN
+© 1996 Yamaha Motor Co., Ltd.
+Edisi pertama, Desember 1996
+Hak cipta dilindungi oleh undang-undang
+Dilarang memperbanyak atau
+menyebarkan sebagian atau seluruh
+isi buku ini dalam bentuk atau cara apapun
+termasuk memfotocopy dan merekamnya
+tanpa izin tertulis dari pemegang hak cipta.
+Dengan demikian harus diperoleh
+izin tertulis sebelum sebagian atau
+seluruh isi buku ini disimpan didalam
+sistem penyimpanan berbentuk apapun.
+Dicetak di Indonesia
+P/N 656-28197-86-VI
+[OCR from Embedded Images]
+Image 1:
+PERHATIAN
+Buku petunjuk yang disusun oleh Yamaha Motor Company ini terutama dimaksudkan untuk digunakan
+oleh para dealer Yamaha dan mekanik-mekaniknya sebagai pedoman dalam meiakukan perawatan
+dan reparasi peralatan buatan Yamaha
+Buku ini disusun untuk mekanik yang memiliki pengetahuan
+dasar tentang konsep dan prosedur mekanik dan elektrikal yang berlaku &ntuk produk kami, karena
+tanpa bekal pengetahuan tadi usaha mereparasi atau perawatan atas produk kami tidak akan
+memberikan hasil sebagaimana mestinya
+Yamaha Motor Company Ltd. secara terus-menerus melakukan perbaikan pada produk-produknya,
+karena itu mungkin saja model tertentu berbeda dengan spesifikasi dan ilustrasi yang terdapat dalam
+buku petunjuk ini.   Sedapat mungkin gunakan edisi terakhir buku petunjuk ini.
+Dealer Yamaha yang ditunjuk mendapat pemberitahuan secara berkala mengenai modifikasi serta
+perubahan spesifikasi dan prosedur; dan semua perubahan ini akan dicantumkan di dalam edisi-
+edisi buku petunjuk berikutnya:
+E9.9C/E15C, E15NK
+BUKU PETUNJUK PERAWATAN
+1996 Yamaha Motor Co-, Ltd.
+Edisi pertama, Desember 1996
+Hak cipta dilindungi oleh undang-undang
+Dilarang memperbanyak atau
+menyebarkan sebagian atau seluruh
+isi buku ini dalam bentuk atau cara apapun
+termasuk memfotocopy dan merekamnya
+tanpa izin tertulis dari pemegang hak cipta
+Dengan demikian harus diperoleh
+izin tertulis sebelum sebagian atau
+seluruh isi buku ini disimpan didalam
+sistem penyimpanan berbentuk apapun:
+Dicetak di Indonesia
+PIN 656-28197-86-VI
+
+--- Page 4 ---
+[Extracted Text]
+HOW TO USE THIS MANUAL
+MANUAL FORMAT
+All of the procedures in this manual are organized in a sequential, step-by-step format. The
+information has been compiled to provide the mechanic with an easy to read, handy refer-
+ence that contains comprehensive explanations of all disassembly, repair, assembly, and
+inspection operations.
+In this revised format, the conaition of a faulty component will precede an arrow symbol! and
+the course of action required will follow the symbol, e.g.,
+e Bearings
+Damage/pitting > Replace.
+To assist you in finding your way through this manual the section title and major heading is
+given at the top of every page.
+ILLUSTRATIONS
+The illustrations within this service manual represent all of the designated models.
+CROSS REFERENCES
+The cross references have been kept to a minimum. Cross references will direct you to the
+appropriate section or chapter.
+[OCR from Embedded Images]
+Image 1:
+HOw TO USE THIS MANUAL
+MANUAL FORMAT
+AIl of the procedures in this manual are organized in
+sequential, step-by-step format_
+The
+information has been compiled to provide the mechanic with an easy to read, handy refer-
+ence that contains comprehensive explanations of all disassembly, repair, assembly,
+and
+inspection operations_
+In this revised format; the conaition of a faulty component will precede an arrow symbol and
+the course of action required will follow the symbol,
+Bearings
+Damage/pitting
+5
+Replace.
+To assist you in finding your way through this manual the section title ad major heading is
+given at the top of every page.
+ILLUSTRATIONS
+The illustrations within this service manual represent all of the designated models.
+CROSS REFERENCES
+The cross references have been kept to
+minimum: Cross references will direct you to the
+appropriate section or chapter.
+e.g ,
+
+--- Page 5 ---
+[Extracted Text]
+CARA MEMPERGUNAKAN BUKU PETUNJUK INI
+SUSUNAN BUKU PETUNJUK
+Semua prosedur di dalam buku petunjuk ini disusun secara langkah demi fangkah yang berurutan.
+Petunjuk-petunjuk yang meliputi bongkar pasang, reparasi, dan pemeriksaan mudah dimengerti oleh
+mekanik. Di dalam petunjuk yang sudah diperbaiki ini, penjelasan mengenai keadaan suatu komponen
+yang rusak, diberi tanda panah serta tindakan yang harus dilakukan, misalnya:
+e Bantalan
+Rusak > Ganti.
+Section Title (Judul Bagian) dan Major Heading (Judul Utama) tercantum pada bagian atas setiap
+halaman untuk mempermudah mencan petunjuk yang diperlukan. Pada halaman pertama dari setiap
+bagian tercantum indeks daftar isi bagian yang bersangkutan.
+URAIAN
+Uraian-uraian yang ada didalam buku petunjuk perawatan berlaku untuk semua model yang di
+sebutkan.
+RUJUKAN SILANG
+Rujukan silang dibuat seminimum mungkin. Rujukan silang akan membimbing anda untuk membaca
+bagian atau bab yang tepat.
+[OCR from Embedded Images]
+Image 1:
+CARA MEMPERGUNAKAN BUKU PETUNJUK INI
+SUSUNAN BUKU PETUNJUK
+Semua prosedur di dalam buku petunjuk ini disusun secara langkah demi Iangkah yang berurutan_
+Petunjuk-petunjuk yang meliputi bongkar pasang; reparasi, dan pemeriksaan mudah dimengerti oleh
+mekanik: Di dalam petunjuk yang sudah diperbaiki ini, penjelasan mengenai keadaan suatu komponen
+yang rusak, diberi tanda panah serta tindakan yang harus dilakukan, misalnya:
+Bantalan
+Rusak
+Ganti.
+Section Title (Judul Bagian) dan Major Heading (Judul Utama) tercantum pada bagian atas setiap
+halaman untuk mempermudah mencari petunjuk yang diperlukan. Pada halaman pertama dari setiap
+bagian tercantum indeks daftar isi bagian yang bersangkutan:
+URAIAN
+Uraian-uraian yang ada
+di dalam buku petunjuk perawatan  berlaku
+untuk
+semua model yang di
+sebutkan.
+RUJUKAN SILANG
+Rujukan silang dibuat seminimum mungkin. Rujukan silang akan membimbing anda untuk membaca
+bagian atau bab yang tepat:

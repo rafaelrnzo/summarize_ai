@@ -1,6 +1,6 @@
-import os
-import re
-from langchain_core.messages import HumanMessage, SystemMessage
+import os 
+import re 
+from langchain_core.messages import HumanMessage, SystemMessage 
 from utils.clutering_text import truncate_text_to_tokens, preprocess_text, split_into_sentences, create_sentence_clusters
 from utils.load_documents import load_document
 from core.depedencies import create_llm
@@ -13,7 +13,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-MAX_TOKENS_PROMPT = int(os.getenv("MAX_TOKENS_PROMPT", 1024))
+MAX_TOKENS_PROMPT = int(os.getenv("MAX_TOKENS_PROMPT"))
+OUTPUT_TEXT = os.getenv("OUTPUT_PATH")
 
 def clean_output_text(text: str) -> str:
     if not text:
@@ -141,24 +142,27 @@ def summarize_with_clustering(text: str, num_clusters: int = 5) -> str:
 def process_document(file_path):
     try:
         logger.info(f"Loading document: {file_path}")
-        document_text = load_document(file_path)
-        
+        load_document(file_path)  
+
+        with open(OUTPUT_TEXT, 'r', encoding='utf-8') as f:
+            document_text = f.read()
+
         word_count = len(document_text.split())
         logger.info(f"Document contains approximately {word_count} words.")
-        
+
         num_clusters = max(3, min(10, word_count // 800))
         logger.info(f"Using {num_clusters} clusters for summarization.")
-        
+
         final_summary = summarize_with_clustering(document_text, num_clusters)
-        
+
         clean_summary = clean_output_text(final_summary)
-        
+
         return {
             "text": document_text,
             "word_count": word_count,
             "summary": clean_summary
         }
-        
+
     except Exception as e:
         error_message = str(e)
         logger.error(f"Error processing document: {error_message}")
