@@ -1,4 +1,5 @@
 app\vid
 app\.env
-app\file
-app\temp
+# Ignore app file and temp folders
+/app/file/
+/app/temp/
