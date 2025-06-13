@@ -1,6 +1,6 @@
 import os
 from typing import List, Dict
-import fitz  # PyMuPDF
+import fitz  
 import easyocr
 from langchain_community.document_loaders import (
     TextLoader, Docx2txtLoader, CSVLoader,
@@ -9,7 +9,6 @@ from langchain_community.document_loaders import (
 from utils.file_type import get_file_type
 from utils.transcribe import transcribe_audio, transcribe_video
 
-# Path untuk menyimpan hasil ekstraksi dokumen
 OUTPUT_FILE = r"D:\pyproject\proj\summarize_ai\app\assets\output.txt"
 
 DOC_LOADERS = {
