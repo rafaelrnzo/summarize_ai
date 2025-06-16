@@ -139,10 +139,11 @@ def summarize_with_clustering(text: str, num_clusters: int = 5) -> str:
     final_summary = create_final_summary(summaries, llm)
     return final_summary
 
+
 def process_document(file_path):
     try:
         logger.info(f"Loading document: {file_path}")
-        load_document(file_path)  
+        load_document(file_path)
 
         with open(OUTPUT_TEXT, 'r', encoding='utf-8') as f:
             document_text = f.read()
@@ -154,17 +155,24 @@ def process_document(file_path):
         logger.info(f"Using {num_clusters} clusters for summarization.")
 
         final_summary = summarize_with_clustering(document_text, num_clusters)
-
         clean_summary = clean_output_text(final_summary)
 
-        return {
+        result = {
             "text": document_text,
             "word_count": word_count,
-            "summary": clean_summary
+            "summary": clean_summary,
         }
+
+        if file_path.lower().endswith((".mp3", ".mp4")):
+            with open(OUTPUT_TEXT, 'r', encoding='utf-8') as f:
+                lines = [clean_output_text(line) for line in f.readlines() if line.strip()]
+            result["scripts"] = [{"text": line} for line in lines]
+
+        logger.info("Document processed successfully")
+        return result
 
     except Exception as e:
         error_message = str(e)
         logger.error(f"Error processing document: {error_message}")
         logger.debug(traceback.format_exc())
-        return {"error": f"Error processing document: {error_message}"}
+        return {"error": f"Error processing document: {error_messa

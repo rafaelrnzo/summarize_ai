@@ -12,7 +12,7 @@ router = APIRouter(prefix="/v1/scan", tags=["scanner"])
 async def convert_images_to_pdf(
     files: List[UploadFile] = File(...),
     output_name: str = Query(..., description="Output PDF file name without .pdf extension")
-):
+):  
     session_id = str(uuid.uuid4())
     temp_dir = f"temp/{session_id}"
     os.makedirs(temp_dir, exist_ok=True)

@@ -3,11 +3,13 @@ from core.schemas import SummarizeRequest
 from services.ServicesSummarize import process_document
 import logging
 from typing import Dict, Any
-import time  # Import time module
+import time
+import re
+from utils.split_sentence import split_into_sentences
 
 logger = logging.getLogger(__name__)
-
 router = APIRouter(prefix="/v1/file", tags=["summarize"])
+
 
 @router.post(
     "/summarize",
@@ -17,7 +19,7 @@ router = APIRouter(prefix="/v1/file", tags=["summarize"])
 )
 async def file_summarize(request: SummarizeRequest) -> Dict[str, Any]:
     file_path = request.file_path
-    start_time = time.time()  # Start timer
+    start_time = time.time()
 
     try:
         result = process_document(file_path)
@@ -29,16 +31,26 @@ async def file_summarize(request: SummarizeRequest) -> Dict[str, Any]:
                 "message": result["error"],
                 "process_time": round(time.time() - start_time, 4)
             }
-        
+
         if "summary" in result and isinstance(result["summary"], str):
             result["summary"] = result["summary"].strip()
-        
-        logger.info(f"Successfully summarized document: {file_path}")
+
+        all_text = ""
+        if "scripts" in result:
+            if isinstance(result["scripts"], list):
+                if all(isinstance(item, dict) and "text" in item for item in result["scripts"]):
+                    all_text = " ".join(item["text"] for item in result["scripts"])
+                elif all(isinstance(item, str) for item in result["scripts"]):
+                    all_text = " ".join(result["scripts"])
+
+        scripts_clean = split_into_sentences(all_text)
+
         return {
             "status": "success",
             "file_path": file_path,
             "response": {
-                "summary": result.get("summary", "")
+                "summary": result.get("summary", ""),
+                "scripts": scripts_clean
             },
             "process_time": round(time.time() - start_time, 4)
         }
