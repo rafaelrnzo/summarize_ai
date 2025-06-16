@@ -3,3 +3,4 @@ app\.env
 # Ignore app file and temp folders
 /app/file/
 /app/temp/
+/.idea/

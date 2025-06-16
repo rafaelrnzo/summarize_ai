@@ -175,4 +175,4 @@ def process_document(file_path):
         error_message = str(e)
         logger.error(f"Error processing document: {error_message}")
         logger.debug(traceback.format_exc())
-        return {"error": f"Error processing document: {error_messa
+        return {"error": f"Error processing document: {error_message}"}
