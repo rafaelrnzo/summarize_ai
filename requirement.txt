@@ -8,6 +8,7 @@ whisper
 nltk
 numpy
 scikit-learn
+python-multipart
 fastapi
 uvicorn
 unstructured
