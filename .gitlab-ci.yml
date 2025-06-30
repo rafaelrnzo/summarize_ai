@@ -28,7 +28,7 @@ build:
     policy: pull-push
   before_script:
     - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"$REPOSITORY\":{\"username\":\"$DOCKERUSER\",\"password\":\"$DOCKERPASSWORD\",\"auth\":\"$(echo -n "$DOCKERUSER:$DOCKERPASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"username\":\"$DOCKERUSER\",\"password\":\"$DOCKERPASSWORD\",\"auth\":\"$(echo -n "$DOCKERUSER:$DOCKERPASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
   script:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
