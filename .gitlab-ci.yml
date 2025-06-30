@@ -1,0 +1,48 @@
+variables:
+  SSHUSER: "backend"
+  SSHPASS: "falah0918"
+  SSHSERVER: "10.70.0.32"
+  BRANCH: "$CI_COMMIT_REF_NAME"
+  DOCKER_COMMAND: "docker compose up -d"
+  REPOSITORY: "registry.falahtech.com/ai-generative"
+  TAG_COMMIT: "$REPOSITORY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
+  TAG_LATEST: "$REPOSITORY/$CI_PROJECT_NAME:latest"
+  DOCKERUSER: "admin"
+  DOCKERPASSWORD: "Falah0918PRGM"
+  GIT_DEPTH: "0"
+  FLUX_HTTPS_URL: "https://wush:$GIT_TOKEN@git.falahtech.com/wush/staging.git"
+
+stages:
+  - build
+
+build:
+  stage: build
+  image:
+    name: registry.falahtech.com/library/kaniko-executor:v1.24.0-debug
+    entrypoint: [""]
+  variables:
+    DOCKER_CONFIG: "/kaniko/.docker/"
+  cache:
+    key: "${CI_COMMIT_REF_SLUG}-kaniko"
+    paths:
+      - /cache
+    policy: pull-push
+  before_script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$REPOSITORY\":{\"username\":\"$DOCKERUSER\",\"password\":\"$DOCKERPASSWORD\",\"auth\":\"$(echo -n "$DOCKERUSER:$DOCKERPASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${TAG_COMMIT}"
+      --destination "${TAG_LATEST}"
+      --insecure-registry
+      --skip-tls-verify
+      --skip-tls-verify-pull
+      --skip-tls-verify-registry
+      --cache=true
+      --snapshot-mode=redo
+      --use-new-run
+      --cache-dir=/cache
+  only:
+    - develop

@@ -7,16 +7,18 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
     build-essential \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip setuptools wheel
-RUN pip install git+https://github.com/openai/whisper.git 
+RUN pip install --upgrade pip setuptools wheel --no-cache-dir
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY app/requirements.txt .
 
-COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir git+https://github.com/openai/whisper.git
 
-EXPOSE 8002
+COPY app .
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003", "--reload"]
+EXPOSE 8003
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003"]
