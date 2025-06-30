@@ -4,11 +4,10 @@ variables:
   SSHSERVER: "10.70.0.32"
   BRANCH: "$CI_COMMIT_REF_NAME"
   DOCKER_COMMAND: "docker compose up -d"
-  REPOSITORY: "registry.falahtech.com/ai-generative"
+  REPOSITORY: "wushie"
   TAG_COMMIT: "$REPOSITORY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
   TAG_LATEST: "$REPOSITORY/$CI_PROJECT_NAME:latest"
-  DOCKERUSER: "admin"
-  DOCKERPASSWORD: "Falah0918PRGM"
+  DOCKERUSER: "wushie"
   GIT_DEPTH: "0"
   FLUX_HTTPS_URL: "https://wush:$GIT_TOKEN@git.falahtech.com/wush/staging.git"
 
