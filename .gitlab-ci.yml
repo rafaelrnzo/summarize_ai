@@ -7,7 +7,7 @@ variables:
   REPOSITORY: "wushie"
   TAG_COMMIT: "$REPOSITORY/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
   TAG_LATEST: "$REPOSITORY/$CI_PROJECT_NAME:latest"
-  DOCKERUSER: "wushie"
+  CI_REGISTRY_USER: "wushie"
   GIT_DEPTH: "0"
   FLUX_HTTPS_URL: "https://wush:$GIT_TOKEN@git.falahtech.com/wush/staging.git"
 
@@ -16,32 +16,18 @@ stages:
 
 build:
   stage: build
-  image:
-    name: registry.falahtech.com/library/kaniko-executor:v1.24.0-debug
-    entrypoint: [""]
+  image: moby/buildkit:rootless
   variables:
-    DOCKER_CONFIG: "/kaniko/.docker/"
-  cache:
-    key: "${CI_COMMIT_REF_SLUG}-kaniko"
-    paths:
-      - /cache
-    policy: pull-push
+    BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
   before_script:
-    - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"username\":\"$DOCKERUSER\",\"password\":\"$DOCKERPASSWORD\",\"auth\":\"$(echo -n "$DOCKERUSER:$DOCKERPASSWORD" | base64)\"}}}" > /kaniko/.docker/config.json
+    - mkdir -p ~/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > ~/.docker/config.json
   script:
-    - /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
-      --destination "${TAG_COMMIT}"
-      --destination "${TAG_LATEST}"
-      --insecure-registry
-      --skip-tls-verify
-      --skip-tls-verify-pull
-      --skip-tls-verify-registry
-      --cache=true
-      --snapshot-mode=redo
-      --use-new-run
-      --cache-dir=/cache
+    - |
+      buildctl-daemonless.sh build \
+        --frontend dockerfile.v0 \
+        --local context=. \
+        --local dockerfile=. \
+        --output type=image,name=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA,push=true
   only:
     - develop
