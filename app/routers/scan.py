@@ -12,12 +12,12 @@ router = APIRouter(prefix="/v1/scan", tags=["scanner"])
 async def convert_images_to_pdf(
     files: List[UploadFile] = File(...),
     output_name: str = Query(..., description="Output PDF file name without .pdf extension")
-):
+):  
     session_id = str(uuid.uuid4())
     temp_dir = f"temp/{session_id}"
     os.makedirs(temp_dir, exist_ok=True)
 
-    image_paths = []
+    image_paths = []    
 
     for i, file in enumerate(files):
         ext = os.path.splitext(file.filename)[-1].lower()
@@ -35,7 +35,7 @@ async def convert_images_to_pdf(
 
     output_pdf_path = os.path.join(
         r"D:\pyproject\proj\summarize_ai\app\file",
-        f"{output_name}.pdf"
+    f"{output_name}.pdf"
     )
 
     subprocess.run([

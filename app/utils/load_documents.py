@@ -1,6 +1,6 @@
 import os
 from typing import List, Dict
-import fitz  # PyMuPDF
+import fitz  
 import easyocr
 from langchain_community.document_loaders import (
     TextLoader, Docx2txtLoader, CSVLoader,
@@ -9,8 +9,8 @@ from langchain_community.document_loaders import (
 from utils.file_type import get_file_type
 from utils.transcribe import transcribe_audio, transcribe_video
 
-# Path untuk menyimpan hasil ekstraksi dokumen
-OUTPUT_FILE = r"D:\pyproject\proj\summarize_ai\app\assets\output.txt"
+OUTPUT_FOLDER = "assets/"
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)  
 
 DOC_LOADERS = {
     '.docx': Docx2txtLoader,
@@ -75,6 +75,9 @@ def load_document(file_path: str) -> str:
     ext, _ = get_file_type(file_path)
     ext = ext.lower()
 
+    file_name = os.path.splitext(os.path.basename(file_path))[0]
+    output_file = os.path.join(OUTPUT_FOLDER, f"{file_name}_output.txt")
+
     try:
         if ext in VIDEO_EXTS:
             content = transcribe_video(file_path)
@@ -91,7 +94,7 @@ def load_document(file_path: str) -> str:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
 
-        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f_out:
+        with open(output_file, 'w', encoding='utf-8') as f_out:
             f_out.write(content)
 
         return content
