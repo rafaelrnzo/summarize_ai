@@ -7,6 +7,7 @@ PyMuPDF
 whisper
 nltk
 numpy
+scikit-learn
 python-multipart
 fastapi
 uvicorn
@@ -15,3 +16,4 @@ python-pptx
 docx2txt
 python-dotenv
 easyocr
+pillow
