@@ -17,3 +17,4 @@ docx2txt
 python-dotenv
 easyocr
 pillow
+git+https://github.com/openai/whisper.git 
