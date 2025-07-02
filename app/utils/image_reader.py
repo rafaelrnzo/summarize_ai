@@ -44,16 +44,18 @@ def describe_image(image_path: str) -> str:
             data=json.dumps(payload),
             timeout=120
         )
-        response.raise_for_status()
+
+        if not response.ok:
+            raise RuntimeError("Internal Server Error: Failed to process image with LLM.")
+
         result = response.json()
         description = result["choices"][0]["message"]["content"].strip()
         return description
 
     except Exception as e:
-        raise RuntimeError(f"Gagal mendeskripsikan gambar dengan LLM: {e}")
+        raise RuntimeError("Internal Server Error: Failed to process image with LLM.")
 
 def describe_image_and_save(image_path: str) -> str:
-
     description = describe_image(image_path)
 
     file_stem = Path(image_path).stem

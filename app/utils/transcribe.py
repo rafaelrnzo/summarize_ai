@@ -1,24 +1,30 @@
-import whisper
-from dotenv import load_dotenv
-from fastapi import HTTPException
 import os
+import requests
+from fastapi import HTTPException
+from dotenv import load_dotenv
 
 load_dotenv()
 
-WHISPER_MODEL = os.getenv("WHISPER_MODEL", "tiny")
+TRANSCRIBE_API_URL = os.getenv("WHISPER_API_URL", "http://192.168.100.3:8001")
 
 def transcribe_audio(audio_path: str) -> str:
+    url = f"{TRANSCRIBE_API_URL}/transcribe/audio"
     try:
-        model = whisper.load_model(WHISPER_MODEL)
-        result = model.transcribe(audio_path)
-        return result['text']
+        with open(audio_path, "rb") as f:
+            files = {"file": (os.path.basename(audio_path), f, "application/octet-stream")}
+            response = requests.post(url, files=files)
+        response.raise_for_status()
+        return response.json()["text"]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Audio transcription error: {str(e)}")
 
 def transcribe_video(video_path: str) -> str:
+    url = f"{TRANSCRIBE_API_URL}/transcribe/video"
     try:
-        model = whisper.load_model(WHISPER_MODEL)
-        result = model.transcribe(video_path)
-        return result['text']
+        with open(video_path, "rb") as f:
+            files = {"file": (os.path.basename(video_path), f, "application/octet-stream")}
+            response = requests.post(url, files=files)
+        response.raise_for_status()
+        return response.json()["text"]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Video transcription error: {str(e)}")

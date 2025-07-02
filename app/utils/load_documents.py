@@ -51,7 +51,6 @@ def load_document(file_path: str) -> str:
             output_file = describe_image_and_save(file_path)
             with open(output_file, 'r', encoding='utf-8') as f:
                 content = f.read()
-
         elif ext in IMAGE_EXTS:
             content = ocr_image(file_path)
         elif ext == '.pdf':
