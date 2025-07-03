@@ -7,7 +7,7 @@ import os
 
 load_dotenv()
 
-MAX_TOKENS_PER_CLUSTER = 500
+MAX_TOKENS_PER_CLUSTER = 512
 
 def preprocess_text(text: str) -> str:
     if not text:

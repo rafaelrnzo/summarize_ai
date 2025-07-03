@@ -16,9 +16,7 @@ COPY app/requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir \
       -r requirements.txt \
-      git+https://github.com/openai/whisper.git \
-      easyocr \
-      --extra-index-url https://download.pytorch.org/whl/cpu && \
+      easyocr && \
     rm -rf /root/.cache
 
 FROM python:3.11-slim

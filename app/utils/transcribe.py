@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TRANSCRIBE_API_URL = os.getenv("WHISPER_API_URL", "http://192.168.100.3:8001")
+TRANSCRIBE_API_URL = os.getenv("SUMMARIZE_SERVICE_URL")
 
 def transcribe_audio(audio_path: str) -> str:
     url = f"{TRANSCRIBE_API_URL}/transcribe/audio"
