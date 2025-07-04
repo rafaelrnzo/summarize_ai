@@ -8,7 +8,7 @@ from core.schemas import SummarizeRequest
 from services.ServicesSummarize import process_document
 from utils.split_sentence import split_into_sentences
 
-BASE_DIR = Path(os.getenv("BASE_DIR") ).resolve()
+BASE_DIR = Path(os.getenv("BASE_DIR")).resolve()
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/v1/file", tags=["summarize"])
@@ -28,7 +28,8 @@ async def file_summarize(request: SummarizeRequest) -> Dict[str, Any]:
         if not requested_path.exists():
             raise FileNotFoundError(f"File not found: {requested_path}")
 
-        result = process_document(str(requested_path))
+        # ✅ Await the coroutine
+        result = await process_document(str(requested_path))
 
         if "error" in result:
             logger.error(f"Processing error: {result['error']}")

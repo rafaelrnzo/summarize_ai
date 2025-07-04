@@ -1,23 +1,80 @@
 import re
 import traceback
 import logging
+import asyncio
+import aiohttp
 from pathlib import Path
 from dotenv import load_dotenv
-from langchain_core.messages import HumanMessage, SystemMessage
 import os
+from typing import List, Dict, Any
 from utils.clutering_text import (
     truncate_text_to_tokens, preprocess_text, 
     split_into_sentences, create_sentence_clusters
 )
 from utils.load_documents import load_document
-from core.depedencies import create_llm
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-MAX_TOKENS_PROMPT = int(os.getenv("MAX_TOKENS_PROMPT"))
-OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "assets/"))  
+MAX_TOKENS_PROMPT = int(os.getenv("MAX_TOKENS_PROMPT", "4000"))
+OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "assets/"))
+VLLM_ENDPOINT = "http://192.168.100.3:8000"
+MODEL_MISTRAL = "unsloth/mistral-7b-instruct-v0.3-bnb-4bit"
+MAX_CONCURRENT_REQUESTS = int(os.getenv("MAX_CONCURRENT_REQUESTS", "10"))  # Configurable concurrency
+
+class VLLMClient:
+    def __init__(self, endpoint: str, model: str, max_concurrent: int = 10):
+        self.endpoint = endpoint
+        self.model = model
+        self.semaphore = asyncio.Semaphore(max_concurrent)
+        self.session = None
+    
+    async def __aenter__(self):
+        connector = aiohttp.TCPConnector(limit=50, limit_per_host=30)
+        timeout = aiohttp.ClientTimeout(total=120, connect=30)
+        self.session = aiohttp.ClientSession(
+            connector=connector,
+            timeout=timeout,
+            headers={"Content-Type": "application/json"}
+        )
+        return self
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self.session:
+            await self.session.close()
+    
+    async def generate_text(self, prompt: str, max_tokens: int = 512) -> str:
+        async with self.semaphore:
+            try:
+                payload = {
+                    "model": self.model,
+                    "prompt": prompt,
+                    "max_tokens": max_tokens,
+                    "temperature": 0.1,
+                    "top_p": 0.9,
+                    "stop": ["</s>", "<|im_end|>"],
+                    "stream": False
+                }
+                
+                async with self.session.post(
+                    f"{self.endpoint}/v1/completions",
+                    json=payload
+                ) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        return result["choices"][0]["text"].strip()
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"VLLM API error {response.status}: {error_text}")
+                        raise Exception(f"VLLM API error: {response.status}")
+                        
+            except asyncio.TimeoutError:
+                logger.error("Request timed out")
+                raise Exception("Request timeout")
+            except Exception as e:
+                logger.error(f"Error in generate_text: {e}")
+                raise
 
 def clean_output_text(text: str) -> str:
     if not text:
@@ -26,42 +83,99 @@ def clean_output_text(text: str) -> str:
     cleaned = re.sub(r'\s+', ' ', cleaned)
     return cleaned.strip()
 
-def summarize_text_en(text: str, llm) -> str:
+def create_summary_prompt(text: str, max_words: int = 200) -> str:
+    return f"""<|im_start|>system
+You are a professional summarizer. Create a concise, well-structured summary of the following text. 
+Requirements:
+- Maximum {max_words} words
+- Complete sentences only
+- Focus on key points
+- No line breaks or special formatting
+- End with a proper conclusion
+<|im_end|>
+
+<|im_start|>user
+Summarize this text:
+
+{text}
+<|im_end|>
+
+<|im_start|>assistant
+Summary:"""
+
+def create_cluster_summary_prompt(text: str) -> str:
+    return f"""<|im_start|>system
+Summarize the following text into a concise paragraph. Keep it under 100 words. Focus on key points only.
+<|im_end|>
+
+<|im_start|>user
+{text}
+<|im_end|>
+
+<|im_start|>assistant
+Summary:"""
+
+def create_final_summary_prompt(summaries: str) -> str:
+    return f"""<|im_start|>system
+Combine and summarize the key points from the following sections into one coherent conclusion. 
+Maximum 200 words. Ensure logical flow and avoid repetition.
+<|im_end|>
+
+<|im_start|>user
+{summaries}
+<|im_end|>
+
+<|im_start|>assistant
+Final Summary:"""
+
+async def summarize_text_async(text: str, vllm_client: VLLMClient) -> str:
     if not text:
         return "No text available to summarize."
+    
     truncated_text = truncate_text_to_tokens(text, MAX_TOKENS_PROMPT)
-    messages = [
-        SystemMessage(content="Summarize the following text into a complete, well-structured paragraph. Your summary must be under 200 words (approximately 1024 tokens maximum). End with a complete sentence and proper conclusion. Focus only on the most critical points. Do not use line breaks or special formatting."),
-        HumanMessage(content=truncated_text)
-    ]
+    prompt = create_summary_prompt(truncated_text)
+    
     try:
-        response = llm.invoke(messages).content
+        response = await vllm_client.generate_text(prompt, max_tokens=400)
         return clean_output_text(response)
     except Exception as e:
-        logger.error(f"Error in summarize_text_en: {e}")
+        logger.error(f"Error in summarize_text_async: {e}")
         fallback_text = clean_output_text(f"[Auto-extracted summary] {text[:300]}...")
         return fallback_text
 
-def get_cluster_summaries_en(clusters: dict, llm) -> list[str]:
-    summaries = []
-    for cluster_id, sentences in clusters.items():
+async def get_cluster_summaries_async(clusters: Dict[Any, List[str]], vllm_client: VLLMClient) -> List[str]:
+    async def summarize_cluster(cluster_id, sentences):
         text = " ".join(sentences)
         truncated = truncate_text_to_tokens(text, MAX_TOKENS_PROMPT)
-        messages = [
-            SystemMessage(content="Summarize this text into a concise paragraph. Keep it under 100 words (approximately 512 tokens maximum). End with a complete sentence. Focus on key points only. No line breaks or formatting."),
-            HumanMessage(content=truncated)
-        ]
+        prompt = create_cluster_summary_prompt(truncated)
+        
         try:
-            summary = llm.invoke(messages).content
+            summary = await vllm_client.generate_text(prompt, max_tokens=200)
             logger.info(f"Successfully summarized cluster {cluster_id}")
-            summaries.append(clean_output_text(summary))
+            return clean_output_text(summary)
         except Exception as e:
             logger.error(f"Error summarizing cluster {cluster_id}: {e}")
             fallback = " ".join(sentences[:1] + sentences[-1:]) if len(sentences) <= 3 else " ".join([sentences[0], sentences[len(sentences)//2], sentences[-1]])
-            summaries.append(clean_output_text(f"[Auto-extracted summary] {fallback[:300]}..."))
-    return summaries
+            return clean_output_text(f"[Auto-extracted summary] {fallback[:300]}...")
 
-def create_final_summary_en(cluster_summaries: list[str], llm) -> str:
+    tasks = [
+        summarize_cluster(cluster_id, sentences) 
+        for cluster_id, sentences in clusters.items()
+    ]
+    
+    summaries = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    valid_summaries = []
+    for i, summary in enumerate(summaries):
+        if isinstance(summary, Exception):
+            logger.error(f"Cluster {i} failed: {summary}")
+            valid_summaries.append("[Summary generation failed]")
+        else:
+            valid_summaries.append(summary)
+    
+    return valid_summaries
+
+async def create_final_summary_async(cluster_summaries: List[str], vllm_client: VLLMClient) -> str:
     if not cluster_summaries:
         return "No summary available due to processing errors."
 
@@ -74,38 +188,36 @@ def create_final_summary_en(cluster_summaries: list[str], llm) -> str:
 
     full_text = " ".join([f"Section {i+1}: {s}" for i, s in enumerate(cluster_summaries)])
     truncated = truncate_text_to_tokens(full_text, MAX_TOKENS_PROMPT)
-    messages = [
-        SystemMessage(content="Combine and summarize the key points from the following text into one coherent and complete conclusion. The summary must be maximum 200 words (approximately 1024 tokens). Ensure the last sentence is a complete conclusion that is not cut off. Focus on core information, maintain logical flow, and avoid repetition. Use clear and concise English. Do not use line breaks or special formatting."),
-        HumanMessage(content=truncated)
-    ]
+    prompt = create_final_summary_prompt(truncated)
+    
     try:
-        response = llm.invoke(messages).content
+        response = await vllm_client.generate_text(prompt, max_tokens=400)
         return clean_output_text(response)
     except Exception as e:
         logger.error(f"Error generating final summary: {e}")
         return clean_output_text("SUMMARY COMPILATION: " + " ".join(cluster_summaries[:3]))
 
-def summarize_with_clustering_en(text: str, num_clusters: int = 5) -> str:
+async def summarize_with_clustering_async(text: str, num_clusters: int = 5) -> str:
     if not text:
         return "No text available to summarize."
+    
     logger.info("Cleaning and splitting text...")
     sentences = split_into_sentences(preprocess_text(text))
     logger.info(f"{len(sentences)} sentences found.")
-    llm = create_llm()
+    
+    async with VLLMClient(VLLM_ENDPOINT, MODEL_MISTRAL, MAX_CONCURRENT_REQUESTS) as vllm_client:
+        if len(sentences) < 10:
+            return await summarize_text_async(" ".join(sentences), vllm_client)
+        
+        clusters = create_sentence_clusters(sentences, num_clusters)
+        logger.info(f"Created {len(clusters)} clusters")
+        
+        summaries = await get_cluster_summaries_async(clusters, vllm_client)
+        final_summary = await create_final_summary_async(summaries, vllm_client)
+        
+        return final_summary
 
-    if len(sentences) < 10:
-        return summarize_text_en(" ".join(sentences), llm)
-
-    clusters = create_sentence_clusters(sentences, num_clusters)
-    summaries = get_cluster_summaries_en(clusters, llm)
-    return create_final_summary_en(summaries, llm)
-
-def process_document(file_path: str):
-    """
-    Process document and return English summary.
-    Args:
-        file_path (str): Path to the document
-    """
+async def process_document(file_path: str) -> Dict[str, Any]:
     try:
         logger.info(f"Loading document: {file_path}")
         load_document(file_path)
@@ -118,16 +230,22 @@ def process_document(file_path: str):
 
         word_count = len(document_text.split())
         logger.info(f"Document contains approximately {word_count} words.")
-        num_clusters = max(3, min(10, word_count // 800))
+        
+        num_clusters = max(3, min(15, word_count // 600))
         logger.info(f"Using {num_clusters} clusters for summarization.")
 
-        final_summary = summarize_with_clustering_en(document_text, num_clusters)
+        final_summary = await summarize_with_clustering_async(document_text, num_clusters)
 
         result = {
             "text": document_text,
             "word_count": word_count,
             "summary": clean_output_text(final_summary),
-            "language": "en"
+            "language": "en",
+            "processing_info": {
+                "clusters_used": num_clusters,
+                "concurrent_requests": MAX_CONCURRENT_REQUESTS,
+                "vllm_model": MODEL_MISTRAL
+            }
         }
 
         if file_path_obj.suffix.lower() in {".mp3", ".mp4"}:
@@ -149,3 +267,8 @@ def process_document(file_path: str):
         logger.error(f"Error processing document: {e}")
         logger.debug(traceback.format_exc())
         return {"error": f"Error processing document: {e}"}
+
+async def process_multiple_documents(file_paths: List[str]) -> List[Dict[str, Any]]:
+    tasks = [process_document(file_path) for file_path in file_paths]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    return results
