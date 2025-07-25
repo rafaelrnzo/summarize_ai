@@ -5,7 +5,7 @@ from langchain_community.document_loaders import (
     UnstructuredExcelLoader, UnstructuredPowerPointLoader
 )
 
-from utils.extract_ocr import extract_text_ocr, ocr_image
+from utils.extract_ocr import extract_text_ocr
 from utils.image_reader import describe_image, describe_image_and_save
 from utils.file_type import get_file_type
 from utils.transcribe import transcribe_audio, transcribe_video
@@ -51,8 +51,8 @@ def load_document(file_path: str) -> str:
             output_file = describe_image_and_save(file_path)
             with open(output_file, 'r', encoding='utf-8') as f:
                 content = f.read()
-        elif ext in IMAGE_EXTS:
-            content = ocr_image(file_path)
+        # elif ext in IMAGE_EXTS:
+        #     content = ocr_image(file_path)
         elif ext == '.pdf':
             content = extract_text_ocr(file_path)
         elif ext in DOC_LOADERS:

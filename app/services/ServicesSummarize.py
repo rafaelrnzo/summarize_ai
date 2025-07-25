@@ -17,10 +17,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-MAX_TOKENS_PROMPT = int(os.getenv("MAX_TOKENS_PROMPT", "4000"))
+MAX_TOKENS_PROMPT = int(os.getenv("MAX_TOKENS_PROMPT"))
 OUTPUT_FOLDER = Path(os.getenv("OUTPUT_FOLDER", "assets/"))
-VLLM_ENDPOINT = "http://192.168.100.3:8000"
-MODEL_MISTRAL = "unsloth/mistral-7b-instruct-v0.3-bnb-4bit"
+VLLM_ENDPOINT = os.getenv("MODEL_API_BASE")
+MODEL_MISTRAL = os.getenv("MODEL_MISTRAL")
 MAX_CONCURRENT_REQUESTS = int(os.getenv("MAX_CONCURRENT_REQUESTS", "10"))
 
 class VLLMClient:
@@ -49,17 +49,19 @@ class VLLMClient:
             try:
                 payload = {
                     "model": self.model,
-                    "prompt": prompt,
-                    "max_tokens": max_tokens,
+                    "messages": [
+                        {"role": "system", "content": "You are a helpful assistant."},
+                        {"role": "user", "content": prompt}
+                    ],
                     "temperature": 0.1,
                     "top_p": 0.9,
-                    "stop": ["</s>", "<|im_end|>"],
+                    "max_tokens": max_tokens,
                     "stream": False
                 }
-                async with self.session.post(f"{self.endpoint}/v1/completions", json=payload) as response:
+                async with self.session.post(f"{self.endpoint}/chat/completions", json=payload) as response:
                     if response.status == 200:
                         result = await response.json()
-                        return result["choices"][0]["text"].strip()
+                        return result["choices"][0]["message"]["content"].strip()
                     error_text = await response.text()
                     logger.error(f"VLLM API error {response.status}: {error_text}")
                     raise Exception(f"VLLM API error: {response.status}")
@@ -69,6 +71,7 @@ class VLLMClient:
             except Exception as e:
                 logger.error(f"Error in generate_text: {e}")
                 raise
+
 
 def clean_output_text(text: str) -> str:
     if not text:

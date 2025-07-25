@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MAX_TOKENS_PER_CLUSTER = int(os.getenv("MAX_TOKENS_PER_CLUSTER", "500"))
+MAX_TOKENS_PER_CLUSTER = int(os.getenv("MAX_TOKENS_PER_CLUSTER"))
 CLUSTER_WORD_RATIO = int(os.getenv("CLUSTER_WORD_RATIO", "600"))
 
 def preprocess_text(text: str) -> str:
