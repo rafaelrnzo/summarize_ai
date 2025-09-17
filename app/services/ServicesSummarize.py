@@ -82,48 +82,45 @@ def clean_output_text(text: str) -> str:
 
 def create_summary_prompt(text: str, max_words: int = 512) -> str:
     return f"""<|im_start|>system
-You are a professional summarizer. Create a concise, well-structured summary of the following text. 
-Requirements:
-- Maximum {max_words} words
-- Complete sentences only
-- Focus on key points
-- No line breaks or special formatting
-- End with a proper conclusion
+You're helping someone understand this content by creating a natural, conversational summary. Write like you're explaining it to a friend - use everyday language, avoid jargon, and make it engaging. Keep it under {max_words} words and focus on what's actually important and interesting.
 <|im_end|>
 
 <|im_start|>user
-Summarize this text:
+Can you help me understand what this text is about? Here it is:
 
 {text}
 <|im_end|>
 
 <|im_start|>assistant
-Summary:"""
+Here's what this is about:"""
 
 def create_cluster_summary_prompt(text: str) -> str:
     return f"""<|im_start|>system
-Summarize the following text into a concise paragraph. Keep it under 100 words. Focus on key points only.
+Explain the main points from this text in a natural, conversational way. Keep it brief (under 100 words) and focus on what's most interesting or important. Write like you're telling someone about it over coffee.
 <|im_end|>
 
 <|im_start|>user
+What are the key points here?
+
 {text}
 <|im_end|>
 
 <|im_start|>assistant
-Summary:"""
+The main points are:"""
 
 def create_final_summary_prompt(summaries: str) -> str:
     return f"""<|im_start|>system
-Combine and summarize the key points from the following sections into one coherent conclusion. 
-Maximum is under 512 words. Ensure logical flow and avoid repetition.
+You've got several key points from different sections. Now bring them together into one clear, engaging summary that tells the complete story. Write naturally - like you're giving someone the highlights of something you just read. Keep it under 512 words and make sure it flows well from start to finish.
 <|im_end|>
 
 <|im_start|>user
+Here are the main points from different sections. Can you put this all together for me?
+
 {summaries}
 <|im_end|>
 
 <|im_start|>assistant
-Final Summary:"""
+Here's the complete picture:"""
 
 async def summarize_text_async(text: str, vllm_client: VLLMClient) -> str:
     if not text:
