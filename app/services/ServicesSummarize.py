@@ -235,7 +235,6 @@ async def process_document(file_path: str) -> Dict[str, Any]:
 
     except Exception as e:
         logger.error(f"Error processing document: {e}")
-        logger.debug(traceback.format_exc())
         return {"error": f"Error processing document: {e}"}
 
 async def process_multiple_documents(file_paths: List[str]) -> List[Dict[str, Any]]:
