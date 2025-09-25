@@ -3,10 +3,6 @@ import os
 
 EXTRACT_API_URL = os.getenv("SUMMARIZE_SERVICE_URL")
 
-# def ocr_image(path: str) -> str:
-#     results = reader.readtext(path)
-#     return "\n".join([res[1] for res in results])
-
 def extract_text_ocr(pdf_path: str) -> str:
     url = f"{EXTRACT_API_URL}/extract/pdf"
     with open(pdf_path, "rb") as f:

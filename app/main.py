@@ -17,7 +17,6 @@ app.add_middleware(
 
 app.include_router(summarize.router)
 app.include_router(scan.router)
-# app.include_router(chat.router)
 
 @app.get("/")
 async def root():

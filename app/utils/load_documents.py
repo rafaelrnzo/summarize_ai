@@ -5,9 +5,9 @@ from langchain_community.document_loaders import (
     UnstructuredExcelLoader, UnstructuredPowerPointLoader
 )
 
-from utils.extract_ocr import extract_text_ocr
+from helper.extract_ocr import extract_text_ocr
 from utils.image_reader import describe_image, describe_image_and_save
-from utils.file_type import get_file_type
+from helper.file_type import get_file_type
 from utils.transcribe import transcribe_audio, transcribe_video
 
 OUTPUT_FOLDER = "assets/"

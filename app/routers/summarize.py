@@ -6,7 +6,7 @@ from typing import Dict, Any
 from fastapi import APIRouter, HTTPException
 from core.schemas import SummarizeRequest
 from services.ServicesSummarize import process_document
-from utils.split_sentence import split_into_sentences
+from helper.split_sentence import split_into_sentences
 
 BASE_DIR = Path(os.getenv("BASE_DIR")).resolve()
 
@@ -18,17 +18,14 @@ async def file_summarize(request: SummarizeRequest) -> Dict[str, Any]:
     start_time = time.time()
 
     try:
-        # Sanitize and resolve path
         requested_path = (BASE_DIR / request.file_path.strip("/\\")).resolve()
 
-        # Prevent path traversal
         if not str(requested_path).startswith(str(BASE_DIR)):
             raise HTTPException(status_code=400, detail="Invalid file path. Access denied.")
 
         if not requested_path.exists():
             raise FileNotFoundError(f"File not found: {requested_path}")
 
-        # ✅ Await the coroutine
         result = await process_document(str(requested_path))
 
         if "error" in result:
